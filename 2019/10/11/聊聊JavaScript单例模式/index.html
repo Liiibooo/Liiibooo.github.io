@@ -121,21 +121,21 @@ p1 <span class="token operator">===</span> p2 <span class="token comment" spellc
 </code></pre>
 <p>以上定义了一个Person对象，然后通过new分别生成了p1和p2两个实例对象。很显然p1和p2不相等，这是因为p1和p2指向的是两块不同的存储地址。<strong>那么单例模式就是无论怎么创建实例，永远返回第一次创建的那个唯一实例。</strong><br>那么要实现这个方法，就得先判断构造函数是否生成过一个实例，如果生成了实例就返回这个实例，则创建一个实例。那么一开始思路就是：</p>
 <pre class=" language-javascript"><code class="language-javascript">
-   <span class="token keyword">class</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-        <span class="token keyword">static</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-            <span class="token comment" spellcheck="true">// 判断是否已经new过1个实例</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>SingleCase<span class="token punctuation">.</span>instance<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-                <span class="token comment" spellcheck="true">// 若这个唯一的实例不存在，那么先创建它</span>
-                SingleCase<span class="token punctuation">.</span>instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleDog</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-            <span class="token punctuation">}</span>
-            <span class="token comment" spellcheck="true">// 如果这个唯一的实例已经存在，则直接返回</span>
-            <span class="token keyword">return</span> SingleCase<span class="token punctuation">.</span>instance
+<span class="token keyword">class</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">static</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">// 判断是否已经new过1个实例</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>SingleCase<span class="token punctuation">.</span>instance<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// 若这个唯一的实例不存在，那么先创建它</span>
+            SingleCase<span class="token punctuation">.</span>instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleDog</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
         <span class="token punctuation">}</span>
-   <span class="token punctuation">}</span>
+        <span class="token comment" spellcheck="true">// 如果这个唯一的实例已经存在，则直接返回</span>
+        <span class="token keyword">return</span> SingleCase<span class="token punctuation">.</span>instance
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
 
-   <span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-   <span class="token keyword">const</span> p2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-   p1 <span class="token operator">===</span> p2 <span class="token comment" spellcheck="true">// true</span>
+<span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> p2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+p1 <span class="token operator">===</span> p2 <span class="token comment" spellcheck="true">// true</span>
 </code></pre>
 <p>刚开始我尝试在constructor或者定义一个static属性，发现最终都不行。只能借助方法来实现。<br>除此之外还有一个写法，getInstance的逻辑用闭包来实现：</p>
 <pre class=" language-javascript"><code class="language-javascript">
