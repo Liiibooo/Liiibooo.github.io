@@ -97,7 +97,7 @@
       <span id="busuanzi_value_page_pv"></span> 点击
     </span>
       <span class="slash">/</span>
-      <span class="read">阅读耗时 4 分钟</span>
+      <span class="read">阅读耗时 5 分钟</span>
     </header>
 
     <div class="post-content">
@@ -119,7 +119,7 @@
 
 p1 <span class="token operator">===</span> p2 <span class="token comment" spellcheck="true">//false</span>
 </code></pre>
-<p>以上定义了一个Person对象，然后通过new分别生成了p1和p2两个实例对象。很显然p1和p2不相等，这是因为p1和p2指向的是两块不同的存储地址。<strong>那么单例模式就是无论怎么创建实例，永远返回第一次创建的那个唯一实例。</strong><br>那么要实现这个方法，就得先判断构造函数是否生成过一个实例，如果生成了实例就返回这个实例，则创建一个实例。那么一开始思路就是：</p>
+<p>以上定义了一个Person对象，然后通过new分别生成了p1和p2两个实例对象。很显然p1和p2不相等，这是因为p1和p2指向的是两块不同的存储地址。<strong>那么单例模式就是无论怎么创建实例，永远返回第一次创建的那个唯一实例。</strong><br>那么要实现这个方法，就得先判断构造函数是否生成过一个实例，如果生成了实例就返回这个实例，否则创建一个实例。那么一开始思路就是：</p>
 <pre class=" language-javascript"><code class="language-javascript">
 <span class="token keyword">class</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
     <span class="token keyword">static</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -137,7 +137,7 @@ p1 <span class="token operator">===</span> p2 <span class="token comment" spellc
 <span class="token keyword">const</span> p2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 p1 <span class="token operator">===</span> p2 <span class="token comment" spellcheck="true">// true</span>
 </code></pre>
-<p>刚开始我尝试在constructor或者定义一个static属性，发现最终都不行。只能借助方法来实现。<br>除此之外还有一个写法，getInstance的逻辑用闭包来实现：</p>
+<p>除此之外还有一个写法，getInstance的逻辑用闭包来实现：</p>
 <pre class=" language-javascript"><code class="language-javascript">
 <span class="token keyword">class</span> <span class="token class-name">SingleCase</span> <span class="token punctuation">{</span>
 
@@ -158,6 +158,36 @@ p1 <span class="token operator">===</span> p2 <span class="token comment" spellc
 <span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase<span class="token punctuation">.</span>getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token keyword">const</span> p2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase<span class="token punctuation">.</span>getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 p1 <span class="token operator">===</span> p2</code></pre>
+<h2 id="另一种实现方法"><a href="#另一种实现方法" class="headerlink" title="另一种实现方法"></a>另一种实现方法</h2><p>上面两种方法都是借助函数方法来实现的，我在想有没有一种可能是通过变量来实现？顺着这个想法，尝试着实现下：</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token keyword">class</span> <span class="token class-name">S</span><span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>S<span class="token punctuation">.</span>instance<span class="token punctuation">)</span><span class="token punctuation">{</span>
+      S<span class="token punctuation">.</span>instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+      <span class="token keyword">return</span> S<span class="token punctuation">.</span>instance
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true">// result : Maximum call stack size exceeded</span></code></pre>
+<p>执行之后发现结果并没有到达预期效果，这是因为第一次new的时候判断当前是否有instance变量，发现没有instance则进入赋值操作。这一步很关键的一点是赋值前先执行了new操作，则有又执行了一遍constructor里面的内容。从而导致无限循环，导致栈溢出。<br>如何解决这个问题，核心思路就是要在new的时候第一次判断下，具体实现如下：</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token keyword">class</span> <span class="token class-name">S</span><span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span><span class="token punctuation">{</span>
+      status <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>S<span class="token punctuation">.</span>instance<span class="token punctuation">)</span><span class="token punctuation">{</span>
+         <span class="token keyword">let</span> status <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+         S<span class="token punctuation">.</span>instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token keyword">return</span> S<span class="token punctuation">.</span>instance
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true">// result : Maximum call stack size exceeded</span></code></pre>
+<h2 id="单例模式的应用"><a href="#单例模式的应用" class="headerlink" title="单例模式的应用"></a>单例模式的应用</h2><p>最近公司有个项目，里面出现了不同内容的弹窗，刚好可以利用单例模式来创建。</p>
 
     </div>
 
@@ -167,7 +197,7 @@ p1 <span class="token operator">===</span> p2</code></pre>
     
   <div id="toc" class="toc-article">
     <strong class="toc-title">目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是单例模式"><span class="toc-text">什么是单例模式</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是单例模式"><span class="toc-text">什么是单例模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#另一种实现方法"><span class="toc-text">另一种实现方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单例模式的应用"><span class="toc-text">单例模式的应用</span></a></li></ol>
   </div>
 
 
