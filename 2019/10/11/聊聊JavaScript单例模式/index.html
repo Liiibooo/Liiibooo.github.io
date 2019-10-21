@@ -15,7 +15,7 @@
   
 
   
-    <meta name="description" content="聊聊JavaScript单例模式">
+    <meta name="description" content="李博的个人前端博客，主要分享一些前端文章和生活。">
   
   
   <link rel="icon" type="image/x-icon" href="/images/logo.png">
@@ -97,7 +97,7 @@
       <span id="busuanzi_value_page_pv"></span> 点击
     </span>
       <span class="slash">/</span>
-      <span class="read">阅读耗时 5 分钟</span>
+      <span class="read">阅读耗时 8 分钟</span>
     </header>
 
     <div class="post-content">
@@ -170,24 +170,81 @@ p1 <span class="token operator">===</span> p2</code></pre>
 <span class="token punctuation">}</span>
 <span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token comment" spellcheck="true">// result : Maximum call stack size exceeded</span></code></pre>
-<p>执行之后发现结果并没有到达预期效果，这是因为第一次new的时候判断当前是否有instance变量，发现没有instance则进入赋值操作。这一步很关键的一点是赋值前先执行了new操作，则有又执行了一遍constructor里面的内容。从而导致无限循环，导致栈溢出。<br>如何解决这个问题，核心思路就是要在new的时候第一次判断下，具体实现如下：</p>
-<pre class=" language-javascript"><code class="language-javascript"><span class="token keyword">class</span> <span class="token class-name">S</span><span class="token punctuation">{</span>
-  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span><span class="token punctuation">{</span>
-      status <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
-      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>S<span class="token punctuation">.</span>instance<span class="token punctuation">)</span><span class="token punctuation">{</span>
-         <span class="token keyword">let</span> status <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-         S<span class="token punctuation">.</span>instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-      <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+<p>执行之后发现结果并没有到达预期效果，这是因为第一次new的时候判断当前是否有instance变量，发现没有instance则进入赋值操作。这一步很关键的一点是赋值前先执行了new操作，则有又执行了一遍constructor里面的内容。从而导致无限循环，最终栈溢出。<br>如何解决这个问题，核心思路就是要在new的时候第一次判断下，具体实现如下：</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token keyword">class</span> <span class="token class-name">S</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>S<span class="token punctuation">.</span>status<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      S<span class="token punctuation">.</span>status <span class="token operator">=</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>S<span class="token punctuation">.</span>instance<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        S<span class="token punctuation">.</span>status <span class="token operator">=</span> <span class="token boolean">true</span>
+        <span class="token keyword">return</span> S<span class="token punctuation">.</span>instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
         <span class="token keyword">return</span> S<span class="token punctuation">.</span>instance
       <span class="token punctuation">}</span>
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-<span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token comment" spellcheck="true">// result : Maximum call stack size exceeded</span></code></pre>
-<h2 id="单例模式的应用"><a href="#单例模式的应用" class="headerlink" title="单例模式的应用"></a>单例模式的应用</h2><p>最近公司有个项目，里面出现了不同内容的弹窗，刚好可以利用单例模式来创建。</p>
+<span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">S</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+p1 <span class="token operator">===</span> p2  <span class="token comment" spellcheck="true">//true</span></code></pre>
+<p>new S()第一次的时候按顺序执行,判断是否有status,发现没有就进else里面，通过else里面判断是否已经new过实例，发现没有就给一个状态标记。然后再生成一个实例，程序再次走进constructor，发现状态为true。则什么也不做，此时实例已经生成。然后返回instance属性接受这个实例。此时第一次new 操作已经完成。<br>第二次再new的时候，判断status为false，然后再判断S.instance是否存在，此时已经存在，则最终返回此实例。</p>
+<h2 id="单例模式的应用"><a href="#单例模式的应用" class="headerlink" title="单例模式的应用"></a>单例模式的应用</h2><p>dialog弹窗是非常适合单例模式的应用，因为弹窗只有一个，可以通过传参生成不同的弹窗实例。刚好最近公司有个项目用到了，就分享一下。</p>
+<pre class=" language-javascript"><code class="language-javascript">创建弹窗实例<span class="token comment" spellcheck="true">//</span>
+<span class="token keyword">let</span> DialogModal <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> modal <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">,</span> mask <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token comment" spellcheck="true">// 自定义传入弹窗事件以及标题、内容等</span>
+    <span class="token keyword">return</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">{</span> title<span class="token punctuation">,</span> content<span class="token punctuation">,</span> cancelTex<span class="token punctuation">,</span> cancel<span class="token punctuation">,</span> confirm <span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>modal<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            modal <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span>
+            mask <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span>
+            mask<span class="token punctuation">.</span>className <span class="token operator">=</span> <span class="token string">'mask'</span><span class="token punctuation">;</span>
+            mask<span class="token punctuation">.</span><span class="token function">setAttribute</span><span class="token punctuation">(</span><span class="token string">'id'</span><span class="token punctuation">,</span> <span class="token string">'Mask'</span><span class="token punctuation">)</span>
+            modal<span class="token punctuation">.</span><span class="token function">setAttribute</span><span class="token punctuation">(</span><span class="token string">'class'</span><span class="token punctuation">,</span> <span class="token string">'dialog'</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        modal<span class="token punctuation">.</span>innerHTML <span class="token operator">=</span> <span class="token template-string"><span class="token string">`
+                            &lt;p class="modal-title">
+                            </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>title<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">
+                            &lt;/p>
+                            &lt;div class="modal-content">
+                            </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>content<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">
+                            &lt;/div>
+                            &lt;div class="modal-footer">
+                            &lt;p></span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>cancelTex<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">&lt;/p>
+                            &lt;p>去看看&lt;/p>
+                            &lt;/div>
+        `</span></span>
+        modal<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'block'</span>
+        mask<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'block'</span>
+        modal<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'#cancel'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>onclick <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            modal<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'none'</span>
+            mask<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'none'</span>
+            <span class="token function">cancel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+        modal<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'#confirm'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>onclick <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            modal<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'none'</span>
+            mask<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'none'</span>
+            <span class="token function">confirm</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+        document<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>mask<span class="token punctuation">)</span>
+        document<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>modal<span class="token punctuation">)</span>
+        <span class="token comment" spellcheck="true">// return modal</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">new</span> <span class="token class-name">Modal</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    title<span class="token punctuation">:</span> <span class="token string">'温馨提示'</span><span class="token punctuation">,</span>
+    content<span class="token punctuation">:</span> <span class="token string">'确定不去看看优惠券么？'</span><span class="token punctuation">,</span>
+    cancelTex<span class="token punctuation">:</span> <span class="token string">'坚决放弃'</span><span class="token punctuation">,</span>
+      <span class="token comment" spellcheck="true">// 取消按钮事件</span>
+    cancel<span class="token punctuation">:</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token comment" spellcheck="true">//  确认按钮事件</span>
+    confirm<span class="token punctuation">:</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre>
 
     </div>
 
@@ -228,6 +285,11 @@ p1 <span class="token operator">===</span> p2</code></pre>
   
       <div class="post-nav-item post-nav-prev">
           
+          <a href="/2019/10/17/感谢娜姐设计的logo/" rel="prev" title="感谢娜姐设计的logo">
+            感谢娜姐设计的logo
+          </a>
+          <span>〉</span>
+        
       </div>
     </div>
   
