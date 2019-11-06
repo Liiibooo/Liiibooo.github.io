@@ -19,7 +19,7 @@
   
   
   <link rel="icon" type="image/x-icon" href="/images/logo.png">
-  <title>感谢娜姐设计的logo [ 李博blog ]</title>
+  <title>重新学习Nginx及其配置 [ 李博blog ]</title>
   
     <!-- stylesheets list from config.yml -->
     
@@ -77,12 +77,12 @@
   <article class="post" id="post">
     <header class="post-header text-center">
       <h1 class="title">
-        感谢娜姐设计的logo
+        重新学习Nginx及其配置
       </h1>
       <span>
         
-        <time class="time" datetime="2019-10-17T14:38:57.000Z">
-        2019-10-17
+        <time class="time" datetime="2019-11-02T08:20:06.000Z">
+        2019-11-02
       </time>
         
       </span>
@@ -97,25 +97,102 @@
       <span id="busuanzi_value_page_pv"></span> 点击
     </span>
       <span class="slash">/</span>
-      <span class="read">阅读耗时 1 分钟</span>
+      <span class="read">阅读耗时 6 分钟</span>
     </header>
 
     <div class="post-content">
-      <p>距离重新写博客也有一段时间了，虽然中间一段时间有点迷茫，不知道该写点什么。就在前几天跟娜姐（咱们公司UI一姐）说我弄了个博客，就是缺个logo之后。娜姐在百忙之中帮我设计出几个logo，实在是令我非常感激。</p>
+      <p>Nginx在我的工作中占据着很重要的一部分，因为我们公司的一些后台系统都是通过Nginx代理，才能完成联调或者开发。所以说如果没有Nginx，就不可能完成后续的项目开发。</p>
 <a id="more"></a>
+<p>由于一开始进公司并不了解Nginx，关于一些项目配置也是后端同事配置好发给我的。所以每次我只需要执行一下Nginx，然后在本地输入地址就能启动项目。但是就在前天开发一个项目的时候发现Nginx执行后，启动不了项目。我才开始有了想要更深入的了解Nginx的配置以及其工作原理。</p>
+<h2 id="什么是Nginx？"><a href="#什么是Nginx？" class="headerlink" title="什么是Nginx？"></a>什么是Nginx？</h2><blockquote>
+<p>Nginx 是俄罗斯人编写的十分轻量级的 HTTP 服务器,是一个高性能的HTTP和反向代理服务器，同时也是一个 IMAP/POP3/SMTP 代理服务器。</p>
+</blockquote>
+<h2 id="Nginx可以做什么"><a href="#Nginx可以做什么" class="headerlink" title="Nginx可以做什么?"></a>Nginx可以做什么?</h2><p>作为前端开发，Nginx最能解决实际问题的功能就是反向代理，其次还有负载均衡等。所以这次主要讲反向代理解决</p>
+<h2 id="Nginx反向代理"><a href="#Nginx反向代理" class="headerlink" title="Nginx反向代理"></a>Nginx反向代理</h2><p>反向代理就是客户端访问目标服务器之间架设的一层代理服务器，代理服务器接受客户端请求将其转发给目标服务器，这个就是反向代理。</p>
+<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/reverse-proxy.png" alt></p>
+<h2 id="Nginx配置"><a href="#Nginx配置" class="headerlink" title="Nginx配置"></a>Nginx配置</h2><p>因为Nginx的配置是非常多的，大部分配置不是非必填的。所以这里我以自己实际工作项目的Nginx配置为例，来解释每个配置文件的作用。</p>
+<pre><code>#nginx进程数
+worker_processes 1;
 
-<p>自从有了logo之后，仿佛整个网站有了灵魂，哈哈哈。下面就把娜姐给我设计的logo分享下，顺便也测试一下咱阿里oss图片读取。</p>
-<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/logo-01.png" alt></p>
-<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/logo-02.png" alt></p>
-<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/logo-03.png" alt></p>
-<p>最后还是非常非常感谢娜姐的帮助，这也让我更加坚定继续写下去的目标。</p>
+events {
 
+    #单个进程最大连接数
+    worker_connections  1024;
+}
+
+http {
+    #文件扩展名与文件类型映射表
+    include       mime.types;
+
+    #默认文件类型
+    default_type  application/octet-stream;
+
+    #通常web服务器放在反向代理的后面，这样就不能获取到客户的IP地址了，通过$remote_add拿到的IP地址是反向代理服务器的iP地址。反向代理服务器在转发请求的http头信息中，可以增加x_forwarded_for信息，用以记录原有客户端的IP地址和原来客户端的请求的服务器地址。
+    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;
+                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;
+                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+
+    #定义本虚拟主机的访问日志
+    access_log  logs/access.log  main;
+
+    #sendfile指令指定 nginx 是否调用sendfile 函数（zero copy 方式）来输出文件，对于普通应用，必须设为on。如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络IO处理速度，降低系统uptime。
+    sendfile        on;
+
+    #长连接超时时间，单位是秒
+    keepalive_timeout 120;
+
+    #负载均衡配置
+    upstream dubbo_http_adapter{
+        server localhost:9090;
+    }
+
+    #虚拟主机的配置(咱们前端主要配置这里面的文件)
+    server{
+
+        #监听端口
+        listen 80;
+
+        #配置基于名称的虚拟主机，这里是基于本地
+        server_name  localhost;
+
+        #对 &quot;/&quot; 启用反向代理
+        location / {
+            #这里访问location会访问到我本地前端文件
+            root F:\company\cmb_merchant\aggplat\aggplat_www
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html =404;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+
+        #匹配后端以.do结尾的请求
+        location ~(\.do)$ {
+            proxy_pass http://192.168.1.13:8086;
+            proxy_redirect off;
+            proxy_set_header X-Real-IP $remote_addr;
+            #后端的Web服务器可以通过X-Forwarded-For获取用户真实IP
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            #以下是一些反向代理的配置，可选。
+            proxy_set_header Host $host;
+            proxy_connect_timeout 90; #nginx跟后端服务器连接超时时间(代理连接超时)
+            proxy_send_timeout 90; #后端服务器数据回传时间(代理发送超时)
+            proxy_read_timeout 90; #连接成功后，后端服务器响应时间(代理接收超时)
+            proxy_set_header X-Forwarded-Proto https;
+        }
+    }
+
+}</code></pre>
     </div>
 
     <div>全文完。</div>
   </article>
   <div class="toc-container">
     
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Nginx？"><span class="toc-text">什么是Nginx？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx可以做什么"><span class="toc-text">Nginx可以做什么?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx反向代理"><span class="toc-text">Nginx反向代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx配置"><span class="toc-text">Nginx配置</span></a></li></ol>
+  </div>
+
 
   </div>
 </div>
@@ -136,19 +213,14 @@
       <div class="post-nav-item post-nav-next">
         
           <span>〈 </span>
-          <a href="/2019/10/11/聊聊JavaScript单例模式/" rel="next" title="聊聊JavaScript单例模式">
-          聊聊JavaScript单例模式
+          <a href="/2019/10/17/感谢娜姐设计的logo/" rel="next" title="感谢娜姐设计的logo">
+          感谢娜姐设计的logo
           </a>
         
       </div>
   
       <div class="post-nav-item post-nav-prev">
           
-          <a href="/2019/11/02/重新学习Nginx及其配置/" rel="prev" title="重新学习Nginx及其配置">
-            重新学习Nginx及其配置
-          </a>
-          <span>〉</span>
-        
       </div>
     </div>
   
