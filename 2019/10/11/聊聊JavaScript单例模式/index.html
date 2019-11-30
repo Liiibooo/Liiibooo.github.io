@@ -133,8 +133,8 @@ p1 <span class="token operator">===</span> p2 <span class="token comment" spellc
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 
-<span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">const</span> p2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> p1 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase<span class="token punctuation">.</span>getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> p2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SingleCase<span class="token punctuation">.</span>getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 p1 <span class="token operator">===</span> p2 <span class="token comment" spellcheck="true">// true</span>
 </code></pre>
 <p>除此之外还有一个写法，getInstance的逻辑用闭包来实现：</p>
