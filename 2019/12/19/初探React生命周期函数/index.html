@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="李博 个人博客 前端博客">
+  
+
+  
+    <meta name="description" content="李博的个人前端博客，主要分享一些前端文章和生活。">
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>初探React生命周期函数 [ 李博blog ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+  <!-- <link rel="stylesheet" text="text/css" href="/js/prism.css"> -->
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"><script src="/js/prism.js"></script></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://www.itlb.cn/images/logo.png">
+    <span class="title">李博blog</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">首页</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">归档</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">标签</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/search" class="pure-menu-link">搜索</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="https://www.itlb.cn" class="pure-menu-link">关于</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/atom.xml" class="pure-menu-link">订阅</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        初探React生命周期函数
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-12-19T14:12:13.000Z">
+        2019-12-19
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+      <span class="read">阅读耗时 9 分钟</span>
+    </header>
+
+    <div class="post-content">
+      <p>最近在家开始学习react,发现react的生命周期函数相比于Vue要<strong>“麻烦”</strong>的多,由于我学习React是买书看的，所以就有一定的延时性,书上的React版本还停留在16.1,通过网上查找发现从16.4之后就新增修改了几个钩子函数。所以就想写一篇关于react的钩子函数,加深下记忆和学习。</p>
+<a id="more"></a>
+<p>首先看下React16.4之后的生命周期函数  </p>
+<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/lifeCycle.png" alt></p>
+<p>React16.4废弃的三个生命钩子函数</p>
+<ul>
+<li><del>componentWillMount</del>：这个方法在组件被挂在到DOM前调用,且只会被调用一次。</li>
+<li><del>componentWillReceiveProps</del>：这个方法在props引起的组件更新过程中，才会被调用。State引起的组件更新并不会触发该方法执行。</li>
+<li><del>componentWillUpdate</del>：这个方法在组件render调用前执行,可以作为组件更新前来执行某些事件。  </li>
+</ul>
+<p>取而代之的值两个新的生命周期函数</p>
+<ul>
+<li>static getDerivedStateFromProps</li>
+<li>getSnapshotBeforeUpdate</li>
+</ul>
+<p>通常组件的生命周期可以分为三个阶段，分别是：</p>
+<ul>
+<li>挂载阶段</li>
+<li>更新阶段</li>
+<li>卸载阶段</li>
+</ul>
+<h2 id="挂载阶段"><a href="#挂载阶段" class="headerlink" title="挂载阶段"></a>挂载阶段</h2><p>挂载阶段，可以理解为组件的初始化。通俗的说就是讲组件插入DOM中，只会发生一次。依次调用的生命周期方法有：</p>
+<ul>
+<li>constructor</li>
+<li>getDerivedStateFromProps</li>
+<li><del>componentWillMount</del></li>
+<li>render</li>
+<li>componentDidMount  </li>
+</ul>
+<h3 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h3><p>ES6 class的构造方法，组件被创建时，会首先调用组件的构造方法。这个构造方法接受一个props参数，props是从父组件中传入的属性对象，如果父组件中没有传入属性而组件自身定义了默认属性，那么这个props指向的就是组件的默认属性。我们必须在这个方法中首先调用super(props)才能保证props传入到组建中。<br>在构造函数中一般只做两件事</p>
+<ul>
+<li>初始化state对象</li>
+<li>绑定事件方法  <pre class=" language-javascript"><code class="language-javascript"><span class="token function">constructor</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token keyword">super</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> <span class="token punctuation">{</span>
+      name<span class="token punctuation">:</span><span class="token string">'zs'</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span>handleClick <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>handleClick<span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<h3 id="getDerivedStateFromProps"><a href="#getDerivedStateFromProps" class="headerlink" title="getDerivedStateFromProps"></a>getDerivedStateFromProps</h3><blockquote>
+<p>static getDerivedStateFromProps(nextProps, prevState)  </p>
+</blockquote>
+</li>
+</ul>
+<p>首先这个生命周期函数替代了<code>componentWillReceiveProps</code>，由于这是一个静态方法，所以不能在这个函数里面使用this。这个函数分别有两个参数：props和state。分别指接收到新的参数和当前state对象，函数会返回一个新的对象用来更新当前的state。如果不需要更新则返回null。</p>
+<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/lifeCycle2.png" alt>  </p>
+<p>当我们接收到新的属性想要修改自身state的时候，就可以使用<code>getDerivedStateFromProps</code>  </p>
+<pre class=" language-javascript"><code class="language-javascript"> <span class="token keyword">class</span> <span class="token class-name">getMyName</span> <span class="token keyword">extends</span> <span class="token class-name">React<span class="token punctuation">.</span>Component</span> <span class="token punctuation">{</span>
+     state <span class="token operator">=</span> <span class="token punctuation">{</span>
+         name<span class="token punctuation">:</span><span class="token string">'zs'</span>
+     <span class="token punctuation">}</span>
+     <span class="token keyword">static</span> <span class="token function">getDerivedStateFromProps</span><span class="token punctuation">(</span>nextProps<span class="token punctuation">,</span>prevState<span class="token punctuation">)</span><span class="token punctuation">{</span>
+         <span class="token keyword">if</span><span class="token punctuation">(</span>nextProps<span class="token punctuation">.</span>name <span class="token operator">!==</span> prevState<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">{</span>
+             <span class="token keyword">return</span> <span class="token punctuation">{</span>
+                 name<span class="token punctuation">:</span>nextProps<span class="token punctuation">.</span>name
+             <span class="token punctuation">}</span>
+         <span class="token punctuation">}</span>
+         <span class="token keyword">return</span> <span class="token keyword">null</span>
+     <span class="token punctuation">}</span>
+ <span class="token punctuation">}</span></code></pre>
+<h3 id="componentWillMount"><a href="#componentWillMount" class="headerlink" title="componentWillMount"></a><del>componentWillMount</del></h3><p>这个方法在组件挂载到DOM前调用，且只会被调用一次。这个方法中调用this.setState不会引起组件重新渲染。不过这个方法将在React17之后被移除，<code>getDerivedStateFromProps</code>将会代替它</p>
+<h3 id="render"><a href="#render" class="headerlink" title="render"></a>render</h3><p>这是React定义组件时唯一必要的方法  </p>
+<p>返回的类型有以下几种：  </p>
+<ul>
+<li>原生的DOM</li>
+<li>React组件</li>
+<li>Fragment(片段)</li>
+<li>Portals(插槽)</li>
+<li>字符串和数字</li>
+<li>Boolean和null(什么都不会渲染)  </li>
+</ul>
+<p>这里面需要注意的是Render是一个纯函数，在这个方法中不能执行任何有副作用的操作，所以不能在render中调用this.setState。  </p>
+<h3 id="componentDidMount"><a href="#componentDidMount" class="headerlink" title="componentDidMount"></a>componentDidMount</h3><p>这个方法在组件被挂载到DOM后调用，且只会被调用一次。此时可以获取操作到真实DOM节点。同时还可以在这个函数中进行服务器请求，在这个方法中调用this.setState会引起组件重新渲染。  </p>
+<pre class=" language-javascript"><code class="language-javascript"> <span class="token function">componentDidMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+     <span class="token keyword">this</span><span class="token punctuation">.</span>$http<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'XXX'</span><span class="token punctuation">,</span><span class="token punctuation">{</span>XXX<span class="token punctuation">:</span>XXX<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>res<span class="token operator">=</span><span class="token operator">></span><span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//todo something</span>
+     <span class="token punctuation">}</span><span class="token punctuation">)</span>
+ <span class="token punctuation">}</span></code></pre>
+<h2 id="更新阶段"><a href="#更新阶段" class="headerlink" title="更新阶段"></a>更新阶段</h2><p>当组件被挂载到DOM上，组件的props或state发生改变可以引起组件更新。组件更新阶段，依次调用的生命周期方法有如下几种：  </p>
+<ul>
+<li><del>componentWillReceiveProps</del></li>
+<li>getDerivedStateFromProps</li>
+<li>shouldComponentUpdate</li>
+<li><del>componentWillUpdate</del></li>
+<li>render</li>
+<li>getSnapshotBeforeUpdate</li>
+<li>componentDidUpdate</li>
+</ul>
+<h3 id="componentReceiveProps-nextProps"><a href="#componentReceiveProps-nextProps" class="headerlink" title="componentReceiveProps(nextProps)"></a><del>componentReceiveProps(nextProps)</del></h3><p>这个方法只有在props引起的组件更新过程中才会被调用，State引起的组件更新并不会触发该方法执行。方法的nextProps参数是父组件传递给当前组件的新的props。同样react17之后将会移除该生命周期函数。</p>
+<h3 id="getDerivedStateFromProps-1"><a href="#getDerivedStateFromProps-1" class="headerlink" title="getDerivedStateFromProps"></a><del>getDerivedStateFromProps</del></h3><p>只要是更新都会调用该函数  </p>
+<h3 id="shouldComponentUpdate-nextProps-nextState"><a href="#shouldComponentUpdate-nextProps-nextState" class="headerlink" title="shouldComponentUpdate(nextProps,nextState)"></a>shouldComponentUpdate(nextProps,nextState)</h3><p>这个方法决定组件是否继续执行更新，这个方法返回一个布尔值，当返回true的时候（默认返回值），组件会继续执行更新过程。当方法为false的时候，组件的则不会再更新。一般通过比较nextProps、nextState和组件当前的props、state决定这个方法的返回结果。</p>
+<pre class=" language-javascript"><code class="language-javascript"><span class="token function">shouldComponentUpdate</span><span class="token punctuation">(</span>newProps<span class="token punctuation">,</span> newState<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newProps<span class="token punctuation">.</span>number <span class="token operator">&lt;</span> <span class="token number">5</span><span class="token punctuation">)</span> <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token boolean">false</span>
+<span class="token punctuation">}</span></code></pre>
+<h3 id="componentWillUpdate"><a href="#componentWillUpdate" class="headerlink" title="componentWillUpdate"></a><del>componentWillUpdate</del></h3><p>这个方法在组件render调用前执行，即状态改变后将在重新渲染前做的一些工作。</p>
+<h3 id="render-1"><a href="#render-1" class="headerlink" title="render"></a>render</h3><p>更新阶段触发</p>
+<h3 id="getSnapshotBeforeUpdate-prevProps-prevState"><a href="#getSnapshotBeforeUpdate-prevProps-prevState" class="headerlink" title="getSnapshotBeforeUpdate(prevProps,prevState)"></a>getSnapshotBeforeUpdate(prevProps,prevState)</h3><p>该方法在render调用之后，componentDidUpdate之前调用。两个参数分别代表之前的属性和之前的state，该函数还有一个返回值会作为第三个参数传给componentDidUpdate(如果不想传值的话就返回null，否则控制台会警告)  </p>
+<h3 id="componentDidUpdate-prevProps-prevState-snapshot"><a href="#componentDidUpdate-prevProps-prevState-snapshot" class="headerlink" title="componentDidUpdate(prevProps, prevState, snapshot)"></a>componentDidUpdate(prevProps, prevState, snapshot)</h3><p>该方法在getSnapshotBeforeUpdate方法之后被调用，有三个参数prevProps，prevState，snapshot，表示之前的props，之前的state，和snapshot。第三个参数是getSnapshotBeforeUpdate返回的</p>
+<h2 id="卸载阶段"><a href="#卸载阶段" class="headerlink" title="卸载阶段"></a>卸载阶段</h2><p>组件从DOM中被卸载的过程，这个过程 只有一个生命周期函数。</p>
+<h3 id="componentWillUnmount"><a href="#componentWillUnmount" class="headerlink" title="componentWillUnmount"></a>componentWillUnmount</h3><p>这个方法在组建被渲染前调用，可以在这里执行一些清理工作。比如清除组建中使用的定时器等。</p>
+
+    </div>
+
+    <div>全文完。</div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#挂载阶段"><span class="toc-text">挂载阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#constructor-NaN"><span class="toc-text">constructor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getDerivedStateFromProps"><span class="toc-text">getDerivedStateFromProps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#componentWillMount"><span class="toc-text">componentWillMount</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#render"><span class="toc-text">render</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#componentDidMount"><span class="toc-text">componentDidMount</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新阶段"><span class="toc-text">更新阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#componentReceiveProps-nextProps"><span class="toc-text">componentReceiveProps(nextProps)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getDerivedStateFromProps-1"><span class="toc-text">getDerivedStateFromProps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shouldComponentUpdate-nextProps-nextState"><span class="toc-text">shouldComponentUpdate(nextProps,nextState)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#componentWillUpdate"><span class="toc-text">componentWillUpdate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#render-1"><span class="toc-text">render</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getSnapshotBeforeUpdate-prevProps-prevState"><span class="toc-text">getSnapshotBeforeUpdate(prevProps,prevState)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#componentDidUpdate-prevProps-prevState-snapshot"><span class="toc-text">componentDidUpdate(prevProps, prevState, snapshot)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#卸载阶段"><span class="toc-text">卸载阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#componentWillUnmount"><span class="toc-text">componentWillUnmount</span></a></li></ol></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <!-- <img src="https://kevinofneu-blog-static.oss-cn-beijing.aliyuncs.com/static/2018-12-10-qrcode_for_gh_ffacf5722095_258.jpg" alt="Running Geek" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">老铁们关注走一走，不迷路</div>
+   -->
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/12/11/手写JavaScript常用数组/" rel="next" title="手写JavaScript常用数组">
+          手写JavaScript常用数组
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://www.itlb.cn">首页</a> |
+        <a class="bottom-item" href="https://www.itlb.cn" target="_blank">主站</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>
