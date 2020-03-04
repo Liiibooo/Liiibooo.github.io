@@ -97,7 +97,7 @@
       <span id="busuanzi_value_page_pv"></span> 点击
     </span>
       <span class="slash">/</span>
-      <span class="read">阅读耗时 13 分钟</span>
+      <span class="read">阅读耗时 15 分钟</span>
     </header>
 
     <div class="post-content">
@@ -391,7 +391,104 @@ module<span class="token punctuation">.</span>exports <span class="token operato
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
+<h4 id="1-8构建Vue开发环境"><a href="#1-8构建Vue开发环境" class="headerlink" title="1.8构建Vue开发环境"></a>1.8构建Vue开发环境</h4><pre><code>
+  npm i -D vue-loader vue-template-compiler vue-style-loader
+  npm i -S vue
+</code></pre><p><strong><em>vue-loader</em></strong> 用于解析 <strong><em>.vue</em></strong> 后缀文件<br><strong><em>vue-template-compiler</em></strong> 用于编译模板 </p>
+<pre class=" language-javascript"><code class="language-javascript">
+  <span class="token keyword">const</span> vueLoaderPlugin <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'vue-loader/lib/plugin'</span><span class="token punctuation">)</span>
+  module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+      module<span class="token punctuation">:</span><span class="token punctuation">{</span>
+          rules<span class="token punctuation">:</span><span class="token punctuation">[</span><span class="token punctuation">{</span>
+              test<span class="token punctuation">:</span><span class="token regex">/\.vue$/</span><span class="token punctuation">,</span>
+              use<span class="token punctuation">:</span><span class="token punctuation">[</span><span class="token string">'vue-loader'</span><span class="token punctuation">]</span>
+          <span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">]</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      resolve<span class="token punctuation">:</span><span class="token punctuation">{</span>
+          alias<span class="token punctuation">:</span><span class="token punctuation">{</span>
+            <span class="token string">'vue$'</span><span class="token punctuation">:</span><span class="token string">'vue/dist/vue.runtime.esm.js'</span><span class="token punctuation">,</span>
+            <span class="token string">' @'</span><span class="token punctuation">:</span>path<span class="token punctuation">.</span><span class="token function">resolve</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">,</span><span class="token string">'../src'</span><span class="token punctuation">)</span>
+          <span class="token punctuation">}</span><span class="token punctuation">,</span>
+          extensions<span class="token punctuation">:</span><span class="token punctuation">[</span><span class="token string">'*'</span><span class="token punctuation">,</span><span class="token string">'.js'</span><span class="token punctuation">,</span><span class="token string">'.json'</span><span class="token punctuation">,</span><span class="token string">'.vue'</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    plugins<span class="token punctuation">:</span><span class="token punctuation">[</span>
+          <span class="token keyword">new</span> <span class="token class-name">vueLoaderPlugin</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+</code></pre>
+<p>按照以上配置完成后，接下来在 main.js 文件中导入Vue：</p>
+<pre class=" language-javascript"><code class="language-javascript">
+<span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'vue'</span>
+<span class="token keyword">import</span> App <span class="token keyword">from</span> <span class="token string">'./app'</span>
 
+<span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    render<span class="token punctuation">:</span> h <span class="token operator">=</span><span class="token operator">></span> <span class="token function">h</span><span class="token punctuation">(</span>App<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">$mount</span><span class="token punctuation">(</span><span class="token string">'#app'</span><span class="token punctuation">)</span>
+</code></pre>
+<p>public文件夹下面的index.html</p>
+<pre class=" language-javascript"><code class="language-javascript">
+ <span class="token operator">&lt;</span><span class="token operator">!</span>DOCTYPE html<span class="token operator">></span>
+ <span class="token operator">&lt;</span>html lang<span class="token operator">=</span><span class="token string">"en"</span><span class="token operator">></span>
+ <span class="token operator">&lt;</span>head<span class="token operator">></span>
+     <span class="token operator">&lt;</span>meta charset<span class="token operator">=</span><span class="token string">"UTF-8"</span><span class="token operator">></span>
+     <span class="token operator">&lt;</span>meta name<span class="token operator">=</span><span class="token string">"viewport"</span> content<span class="token operator">=</span><span class="token string">"width=device-width, initial-scale=1.0"</span><span class="token operator">></span>
+     <span class="token operator">&lt;</span>title<span class="token operator">></span>ExampleWebpack<span class="token operator">&lt;</span><span class="token operator">/</span>title<span class="token operator">></span>
+ <span class="token operator">&lt;</span><span class="token operator">/</span>head<span class="token operator">></span>
+ <span class="token operator">&lt;</span>body<span class="token operator">></span>
+     <span class="token operator">&lt;</span>div id<span class="token operator">=</span><span class="token string">"app"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">></span>
+ <span class="token operator">&lt;</span><span class="token operator">/</span>body<span class="token operator">></span>
+ <span class="token operator">&lt;</span><span class="token operator">/</span>html<span class="token operator">></span>
+</code></pre>
+<p>然后再Src文件夹下新建App.vue</p>
+<pre class=" language-javascript"><code class="language-javascript">
+  <span class="token operator">&lt;</span>template<span class="token operator">></span>
+      <span class="token operator">&lt;</span>div <span class="token keyword">class</span><span class="token operator">=</span><span class="token string">"div"</span><span class="token operator">></span><span class="token punctuation">{</span><span class="token punctuation">{</span>msg<span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">></span>
+  <span class="token operator">&lt;</span><span class="token operator">/</span>template<span class="token operator">></span>
+
+  <span class="token operator">&lt;</span>script<span class="token operator">></span>
+  <span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+      <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+          <span class="token keyword">return</span> <span class="token punctuation">{</span>
+              msg<span class="token punctuation">:</span><span class="token string">'hello Vue'</span>
+          <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span>
+
+  <span class="token operator">&lt;</span>style<span class="token operator">></span>
+    <span class="token punctuation">.</span>div<span class="token punctuation">{</span>
+        color<span class="token punctuation">:</span>red<span class="token punctuation">;</span>
+        display<span class="token punctuation">:</span> flex<span class="token punctuation">;</span>
+        font<span class="token operator">-</span>size<span class="token punctuation">:</span> 24px<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token operator">&lt;</span><span class="token operator">/</span>style<span class="token operator">></span>
+</code></pre>
+<p>以上已完成了Vue项目的搭建，为了让项目更接近开发模式，引入 webpack-dev-server 热更新来辅助我们。</p>
+<h5 id="1-8-1-引入webpack-dev-server"><a href="#1-8-1-引入webpack-dev-server" class="headerlink" title="1.8.1 引入webpack-dev-server"></a>1.8.1 引入webpack-dev-server</h5><pre><code>
+  npm i -D webpack-dev-server
+</code></pre><pre class=" language-javascript"><code class="language-javascript">
+  <span class="token keyword">const</span> Webpack <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'webpack'</span><span class="token punctuation">)</span>
+  module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// ...省略其他配置</span>
+    devServer<span class="token punctuation">:</span><span class="token punctuation">{</span>
+      port<span class="token punctuation">:</span><span class="token number">3000</span><span class="token punctuation">,</span>
+      hot<span class="token punctuation">:</span><span class="token boolean">true</span><span class="token punctuation">,</span>
+      contentBase<span class="token punctuation">:</span><span class="token string">'../dist'</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    plugins<span class="token punctuation">:</span><span class="token punctuation">[</span>
+      <span class="token keyword">new</span> <span class="token class-name">Webpack<span class="token punctuation">.</span>HotModuleReplacementPlugin</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+</code></pre>
+<h4 id="1-9配置打包命令"><a href="#1-9配置打包命令" class="headerlink" title="1.9配置打包命令"></a>1.9配置打包命令</h4><pre class=" language-javascript"><code class="language-javascript">
+  <span class="token string">"scripts"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"dev"</span><span class="token punctuation">:</span> <span class="token string">"webpack-dev-server --config build/webpack.config.js --open"</span><span class="token punctuation">,</span>
+    <span class="token string">"build"</span><span class="token punctuation">:</span> <span class="token string">"webpack --config build/webpack.config.js"</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+</code></pre>
+<p>执行 npm run dev 之后浏览器将会在本地开启服务</p>
+<p><img src="https://libo-blog-static.oss-cn-beijing.aliyuncs.com/images/webpack5.png" alt></p>
+<h3 id="webpack优化…"><a href="#webpack优化…" class="headerlink" title="webpack优化…."></a>webpack优化….</h3>
     </div>
 
     <div>全文完。</div>
@@ -400,7 +497,7 @@ module<span class="token punctuation">.</span>exports <span class="token operato
     
   <div id="toc" class="toc-article">
     <strong class="toc-title">目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack核心概念"><span class="toc-text">webpack核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#入口-entry"><span class="toc-text">入口(entry)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#出口-output"><span class="toc-text">出口(output)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#loader"><span class="toc-text">loader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插件（plugin）"><span class="toc-text">插件（plugin）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从0开始我们的配置"><span class="toc-text">从0开始我们的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-初始化项目"><span class="toc-text">1.1 初始化项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-开始自己的配置"><span class="toc-text">1.2 开始自己的配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3配置HTML模板"><span class="toc-text">1.3配置HTML模板</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-1-clean-webpack-plugin"><span class="toc-text">1.3.1 clean-webpack-plugin</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4引用CSS"><span class="toc-text">1.4引用CSS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5加载图片等媒体文件"><span class="toc-text">1.5加载图片等媒体文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-6css引入图片资源导致的Bug"><span class="toc-text">1.6css引入图片资源导致的Bug</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-7用babel转义js文件"><span class="toc-text">1.7用babel转义js文件</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack核心概念"><span class="toc-text">webpack核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#入口-entry"><span class="toc-text">入口(entry)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#出口-output"><span class="toc-text">出口(output)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#loader"><span class="toc-text">loader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插件（plugin）"><span class="toc-text">插件（plugin）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从0开始我们的配置"><span class="toc-text">从0开始我们的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-初始化项目"><span class="toc-text">1.1 初始化项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-开始自己的配置"><span class="toc-text">1.2 开始自己的配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3配置HTML模板"><span class="toc-text">1.3配置HTML模板</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-1-clean-webpack-plugin"><span class="toc-text">1.3.1 clean-webpack-plugin</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4引用CSS"><span class="toc-text">1.4引用CSS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5加载图片等媒体文件"><span class="toc-text">1.5加载图片等媒体文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-6css引入图片资源导致的Bug"><span class="toc-text">1.6css引入图片资源导致的Bug</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-7用babel转义js文件"><span class="toc-text">1.7用babel转义js文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-8构建Vue开发环境"><span class="toc-text">1.8构建Vue开发环境</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-8-1-引入webpack-dev-server"><span class="toc-text">1.8.1 引入webpack-dev-server</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-9配置打包命令"><span class="toc-text">1.9配置打包命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack优化…"><span class="toc-text">webpack优化….</span></a></li></ol>
   </div>
 
 
